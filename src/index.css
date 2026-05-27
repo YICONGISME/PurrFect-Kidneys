@@ -451,23 +451,24 @@ select.form-input {
   width: 100%;
   -webkit-tap-highlight-color: transparent;
 }
-.wlv-col.wlv-today   .wlv-col-head { background: #EBF4FF; }
-.wlv-col.wlv-selected .wlv-col-head { background: var(--brand); }
+.wlv-col.wlv-today    .wlv-col-head { background: #EBF4FF; }
+.wlv-col.wlv-selected .wlv-col-head {
+  background: #EBF4FF;
+  border-bottom: 2.5px solid var(--brand);
+}
 
 .wlv-day-name {
   font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: .2px;
 }
-.wlv-col.wlv-selected .wlv-day-name,
-.wlv-col.wlv-selected .wlv-day-date { color: #fff; }
-.wlv-col.wlv-today .wlv-day-name { color: var(--brand); }
+.wlv-col.wlv-selected .wlv-day-name { color: var(--brand); }
+.wlv-col.wlv-selected .wlv-day-date { color: var(--brand); font-size: 13px; }
+.wlv-col.wlv-today    .wlv-day-name { color: var(--brand); }
 
 .wlv-day-date { font-size: 12px; font-weight: 800; color: var(--text); }
 .wlv-col.wlv-today .wlv-day-date { color: var(--brand); }
 
-.wlv-sel-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: rgba(255,255,255,.8); margin-top: 1px;
-}
+/* dot removed — border is enough indicator */
+.wlv-sel-dot { display: none; }
 
 /* entries inside column */
 .wlv-entries {
