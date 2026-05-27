@@ -72,8 +72,51 @@ export function useLogEntries() {
 
 // ─── Food Records (nutrition analysis) ───────────────────────────────────────
 
+function buildRecord(
+  id: number, name: string,
+  protein: number, fat: number, ash: number, fiber: number,
+  moisture: number, phosphorus: number, calcium: number,
+  canWeight = 200, catWeightKg = 4.2,
+): FoodRecord {
+  const nfe      = Math.max(0, 100 - protein - fat - ash - fiber - moisture)
+  const meTotal  = protein * 3.5 + fat * 8.5 + nfe * 3.5
+  const mePerCan = canWeight > 0 ? meTotal * canWeight / 100 : 0
+  const dm       = 100 - moisture
+  const toDM     = (v: number) => dm > 0 ? v / dm * 100 : 0
+  const dmP      = toDM(phosphorus)
+  const pPer1000kcal = meTotal > 0 ? phosphorus * 1000 / meTotal * 1000 : 0
+  const ckdPass  = phosphorus > 0 ? dmP <= 1.0 && pPer1000kcal <= 2000 : null
+  const rer      = 30 * catWeightKg + 70
+  const dailyFoodG = meTotal > 0 ? rer / meTotal * 100 : 0
+  const foodWater  = moisture / 100 * dailyFoodG
+  return {
+    id, name, protein, fat, ash, fiber, moisture, phosphorus, calcium,
+    canWeight, catWeightKg,
+    meTotal, mePerCan, dm,
+    dmProtein: toDM(protein), dmFat: toDM(fat), dmP,
+    pPer1000kcal, caPRatio: phosphorus > 0 ? calcium / phosphorus : 0,
+    rer, dailyFoodG,
+    dailyCans: canWeight > 0 && dailyFoodG > 0 ? dailyFoodG / canWeight : 0,
+    suppWaterMl: Math.max(0, catWeightKg * 45 - foodWater),
+    ckdPass, date: '预设',
+  }
+}
+
+const DEFAULT_FOODS: FoodRecord[] = [
+  buildRecord(1, 'catz 3号',  8.2, 3.2, 3.6, 1.2, 86.4, 0.11, 0.14),
+  buildRecord(2, 'catz 15号', 8.2, 3.2, 3.8, 1.2, 86.4, 0.11, 0.14),
+  buildRecord(3, '德金猪',   14.3, 5.5, 2.6, 0.4, 77.0, 0.20, 0.27),
+]
+
 export function useFoodRecords() {
-  const [records, setRecords] = useLocalStorage<FoodRecord[]>('pk:foods', [])
+  const [records, setRecords] = useLocalStorage<FoodRecord[]>('pk:foods', DEFAULT_FOODS)
+
+  // seed missing defaults for users who already had an empty records list
+  useEffect(() => {
+    const missing = DEFAULT_FOODS.filter(df => !records.some(r => r.name === df.name))
+    if (missing.length > 0) setRecords(prev => [...missing, ...prev])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const addRecord = useCallback((r: FoodRecord) => {
     setRecords(prev => [r, ...prev])
