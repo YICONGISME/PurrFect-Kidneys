@@ -37,8 +37,9 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
   if (entry.type === 'meal') {
     icon = '🍽️'; cls = 'cc-meal'
     line1 = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '自制')
-    line2 = `${entry.weightG}g/${entry.waterPct}%`
-    const sups = [...(entry.probiotics ? ['益'] : []), ...(entry.fishOil ? ['鱼'] : [])]
+    const wml = parseFloat((entry.weightG * entry.waterPct / 100).toFixed(1))
+    line2 = `${entry.weightG}g·${wml}ml`
+    const sups = [...(entry.probiotics ? ['菌'] : []), ...(entry.fishOil ? ['鱼'] : [])]
     if (sups.length) line3 = sups.join(' ')
   } else if (entry.type === 'pee') {
     icon = '💧'; cls = 'cc-pee'
