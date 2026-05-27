@@ -1,7 +1,7 @@
 import type { NavTab } from '../types'
 
 const TABS: { id: NavTab; icon: string; label: string }[] = [
-  { id: 'log',       icon: '📋', label: '日志' },
+  { id: 'log',       icon: '📋', label: '记录' },
   { id: 'nutrition', icon: '🧪', label: '营养' },
   { id: 'profile',   icon: '🐱', label: '档案' },
 ]

@@ -32,12 +32,14 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
   const time = new Date(entry.timestamp)
     .toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })
 
-  let icon = '', line1 = '', line2 = '', cls = ''
+  let icon = '', line1 = '', line2 = '', line3 = '', cls = ''
 
   if (entry.type === 'meal') {
     icon = '🍽️'; cls = 'cc-meal'
     line1 = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '自制')
     line2 = `${entry.weightG}g/${entry.waterPct}%`
+    const sups = [...(entry.probiotics ? ['益'] : []), ...(entry.fishOil ? ['鱼'] : [])]
+    if (sups.length) line3 = sups.join(' ')
   } else if (entry.type === 'pee') {
     icon = '💧'; cls = 'cc-pee'
     line1 = `${peeMl(entry)}ml`
@@ -62,6 +64,7 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
       <span className="cc-icon">{icon}</span>
       <span className="cc-line1">{line1}</span>
       {line2 && <span className="cc-line2">{line2}</span>}
+      {line3 && <span className="cc-line3">{line3}</span>}
     </div>
   )
 }

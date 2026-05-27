@@ -36,6 +36,8 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
   const [weightG, setWeightG]   = useState('')
   const [manualFoodType, setManualFoodType] = useState<MealEntry['foodType']>('canned')
   const [manualWaterPct, setManualWaterPct] = useState('')
+  const [probiotics, setProbiotics] = useState(false)
+  const [fishOil, setFishOil]       = useState(false)
 
   // ── pee ───────────────────────────────────────────────────────────────────
   const [litterWeightG, setLitterWeightG] = useState('')
@@ -77,6 +79,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
     let data: EntryData
 
     if (entryType === 'meal') {
+      const extras = { probiotics: probiotics || undefined, fishOil: fishOil || undefined }
       if (mealMode === 'record' && selectedRecord) {
         data = {
           type: 'meal',
@@ -85,6 +88,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
           waterPct: selectedRecord.moisture,
           foodRecordId: selectedRecord.id,
           foodName: selectedRecord.name,
+          ...extras,
         }
       } else {
         data = {
@@ -92,6 +96,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
           foodType: manualFoodType,
           weightG: Number(weightG),
           waterPct: Number(manualWaterPct),
+          ...extras,
         }
       }
     } else if (entryType === 'pee') {
@@ -133,7 +138,6 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
         ) : (
           <>
             <div className="sheet-header">
-              <button className="sheet-back" onClick={() => setShowPicker(true)}>← 返回</button>
               <h3 className="sheet-title">{meta.icon} {meta.label}</h3>
             </div>
 
@@ -223,6 +227,18 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
                     ).toFixed(0)} ml
                   </div>
                 )}
+
+                <label className="form-label">是否喂益生菌</label>
+                <div className="btn-group">
+                  <button className={`seg-btn${probiotics  ? ' active' : ''}`} onClick={() => setProbiotics(true)}>✅ 喂了</button>
+                  <button className={`seg-btn${!probiotics ? ' active' : ''}`} onClick={() => setProbiotics(false)}>❌ 没喂</button>
+                </div>
+
+                <label className="form-label">是否喂鱼油</label>
+                <div className="btn-group">
+                  <button className={`seg-btn${fishOil  ? ' active' : ''}`} onClick={() => setFishOil(true)}>✅ 喂了</button>
+                  <button className={`seg-btn${!fishOil ? ' active' : ''}`} onClick={() => setFishOil(false)}>❌ 没喂</button>
+                </div>
               </>
             )}
 

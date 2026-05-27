@@ -509,11 +509,12 @@ select.form-input {
 .cc-line1 { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.3;
             word-break: break-all; max-width: 100%; }
 .cc-line2 { font-size: 9px;  color: var(--muted); line-height: 1.2; }
+.cc-line3 { font-size: 9px;  color: var(--green); font-weight: 700; line-height: 1.2; }
 
 .cc-del {
-  position: absolute; top: 1px; right: 1px;
+  position: absolute; top: 2px; right: 2px;
   background: none; border: none; cursor: pointer;
-  font-size: 10px; color: rgba(0,0,0,.2); padding: 0; line-height: 1;
+  font-size: 14px; color: rgba(0,0,0,.25); padding: 2px; line-height: 1;
   -webkit-tap-highlight-color: transparent;
 }
 .cc-del:active { color: var(--red); }

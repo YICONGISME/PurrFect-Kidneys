@@ -18,6 +18,8 @@ export interface MealEntry {
   waterPct: number                  // 含水量 %
   foodRecordId?: number             // id of linked FoodRecord
   foodName?: string                 // auto-filled from FoodRecord
+  probiotics?: boolean              // 是否喂益生菌
+  fishOil?: boolean                 // 是否喂鱼油
 }
 
 export interface PeeEntry {

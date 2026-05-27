@@ -44,7 +44,8 @@ function EntryRow({ entry, onDelete }: { entry: LogEntry; onDelete: () => void }
     icon = '🍽️'
     title = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '熟自制')
     const waterMl = (entry.weightG * entry.waterPct / 100).toFixed(0)
-    detail = `${entry.weightG} g · 含水 ${entry.waterPct}%（≈${waterMl} ml）`
+    const sups = [...(entry.probiotics ? ['益生菌 ✓'] : []), ...(entry.fishOil ? ['鱼油 ✓'] : [])]
+    detail = `${entry.weightG} g · 含水 ${entry.waterPct}%（≈${waterMl} ml）${sups.length ? ' · ' + sups.join(' · ') : ''}`
     rowCls = 'er-meal'
   } else if (entry.type === 'pee') {
     icon = '💧'
