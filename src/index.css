@@ -377,21 +377,168 @@ select.form-input {
 /* ── Nutrition page ──────────────────────────────────────────────────────── */
 .nutrition-page { padding-bottom: 32px; }
 
-/* ── Log page view toggle ────────────────────────────────────────────────── */
-.log-page { display: flex; flex-direction: column; min-height: 100%; }
-.log-view-toggle {
+/* ── Log page (legacy toggle removed) ───────────────────────────────────── */
+.log-page { display: flex; flex-direction: column; height: 100%; }
+
+/* ── Week Log View ───────────────────────────────────────────────────────── */
+
+/* outer shell — fills app-main */
+.wlv {
   display: flex;
-  background: var(--bg);
+  flex-direction: column;
+  height: 100%;
+  background: var(--white);
+  overflow: hidden;
+}
+
+/* week nav */
+.wlv-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  background: var(--white);
 }
-.lvt-btn {
-  flex: 1; padding: 10px 0; font-size: 14px; font-weight: 600;
-  background: none; border: none; cursor: pointer; color: var(--muted);
-  border-bottom: 2.5px solid transparent; margin-bottom: -1px;
+.wlv-nav-btn {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 50%; font-size: 18px; color: var(--brand);
+  cursor: pointer; flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 }
-.lvt-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
+.wlv-week-label { font-size: 13px; font-weight: 700; }
+
+/* scrollable grid area */
+.wlv-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  position: relative;      /* needed for sticky to resolve against */
+}
+
+/* 7-column grid */
+.wlv-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  min-height: 100%;
+  align-items: start;
+}
+
+/* single day column */
+.wlv-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+}
+.wlv-col:last-child { border-right: none; }
+
+/* sticky column header */
+.wlv-col-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 2px 5px;
+  background: var(--bg);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+.wlv-col.wlv-today   .wlv-col-head { background: #EBF4FF; }
+.wlv-col.wlv-selected .wlv-col-head { background: var(--brand); }
+
+.wlv-day-name {
+  font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: .2px;
+}
+.wlv-col.wlv-selected .wlv-day-name,
+.wlv-col.wlv-selected .wlv-day-date { color: #fff; }
+.wlv-col.wlv-today .wlv-day-name { color: var(--brand); }
+
+.wlv-day-date { font-size: 12px; font-weight: 800; color: var(--text); }
+.wlv-col.wlv-today .wlv-day-date { color: var(--brand); }
+
+.wlv-sel-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,.8); margin-top: 1px;
+}
+
+/* entries inside column */
+.wlv-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 2px;
+}
+
+/* ── Compact entry card ──────────────────────────────────────────────────── */
+.compact-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1px; padding: 4px 2px 3px;
+  border-radius: 6px; border: 1px solid transparent;
+  text-align: center;
+  overflow: hidden;
+  min-height: 52px;
+}
+
+/* type colours */
+.cc-meal   { background: var(--meal-bg);   border-color: var(--meal-border);   }
+.cc-pee    { background: var(--pee-bg);    border-color: var(--pee-border);    }
+.cc-poop   { background: var(--poop-bg);   border-color: var(--poop-border);   }
+.cc-mental { background: var(--mental-bg); border-color: var(--mental-border); }
+
+.cc-time  { font-size: 8px;  color: var(--muted); font-weight: 600; line-height: 1; }
+.cc-icon  { font-size: 14px; line-height: 1; }
+.cc-line1 { font-size: 9px;  font-weight: 700; color: var(--text); line-height: 1.2;
+            word-break: break-all; max-width: 100%; }
+.cc-line2 { font-size: 8px;  color: var(--muted); line-height: 1; }
+
+.cc-del {
+  position: absolute; top: 1px; right: 1px;
+  background: none; border: none; cursor: pointer;
+  font-size: 10px; color: rgba(0,0,0,.2); padding: 0; line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.cc-del:active { color: var(--red); }
+
+/* ── Action bar ──────────────────────────────────────────────────────────── */
+.wlv-action-bar {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  padding-bottom: var(--safe-bottom);
+}
+.wlv-action-label {
+  text-align: center;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  padding: 6px 0 2px;
+}
+.wlv-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.wlv-act-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 10px 4px 12px;
+  background: none; border: none; border-right: 1px solid var(--border);
+  cursor: pointer; font-size: 11px; font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+}
+.wlv-act-btn:last-child { border-right: none; }
+.wlv-act-btn:active { opacity: .7; }
+.wlv-act-icon { font-size: 22px; line-height: 1; }
+.act-meal   { color: var(--meal);   }
+.act-pee    { color: var(--pee);    }
+.act-poop   { color: var(--poop);   }
+.act-mental { color: var(--mental); }
 
 /* ── Week summary ────────────────────────────────────────────────────────── */
 .week-summary { padding: 0 0 24px; }
