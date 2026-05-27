@@ -1,8 +1,6 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +25,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
+      - run: npm install -g npm@10.9.7
 
       - run: npm ci
 
