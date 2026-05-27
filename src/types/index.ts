@@ -36,7 +36,11 @@ export interface PoopEntry {
 
 export interface MentalEntry {
   type: 'mental'
-  status: 'good' | 'normal' | 'poor'  // 好 正常 差
+  playedWand: boolean    // 是否玩逗猫棒
+  didParkour: boolean    // 是否跑酷
+  otherNote?: string     // 其他异常
+  // legacy compat for old entries
+  status?: 'good' | 'normal' | 'poor'
 }
 
 export type EntryData = MealEntry | PeeEntry | PoopEntry | MentalEntry

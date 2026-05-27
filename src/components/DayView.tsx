@@ -62,8 +62,13 @@ function EntryRow({ entry, onDelete }: { entry: LogEntry; onDelete: () => void }
     rowCls = 'er-poop'
   } else {
     icon = '😺'
-    title = { good: '精神好', normal: '精神正常', poor: '精神差' }[entry.status]
     rowCls = 'er-mental'
+    if (entry.status) {
+      title = { good: '精神好', normal: '精神正常', poor: '精神差' }[entry.status]
+    } else {
+      title = `逗猫棒 ${entry.playedWand ? '✓' : '✗'} · 跑酷 ${entry.didParkour ? '✓' : '✗'}`
+      detail = entry.otherNote ?? ''
+    }
   }
 
   return (

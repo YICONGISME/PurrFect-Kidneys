@@ -47,7 +47,12 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
     line1 = { hard: '硬', normal: '正常', soft: '软', liquid: '稀' }[entry.consistency]
   } else {
     icon = '😺'; cls = 'cc-mental'
-    line1 = { good: '好', normal: '正常', poor: '差' }[entry.status]
+    if (entry.status) {
+      line1 = { good: '好', normal: '正常', poor: '差' }[entry.status]
+    } else {
+      line1 = `棒${entry.playedWand ? '✓' : '✗'} 跑${entry.didParkour ? '✓' : '✗'}`
+      line2 = entry.otherNote ? entry.otherNote.slice(0, 5) : ''
+    }
   }
 
   return (

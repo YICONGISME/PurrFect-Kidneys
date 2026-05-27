@@ -37,9 +37,12 @@ function summarise(entries: LogEntry[]) {
       count: poops.length,
       last:  POOP_LABEL[poops[poops.length - 1].consistency],
     } : null,
-    mental: mentals.length ? {
-      status: mentals[mentals.length - 1].status,
-    } : null,
+    mental: mentals.length ? (() => {
+      const last = mentals[mentals.length - 1]
+      return last.status
+        ? { text: MENTAL_LABEL[last.status], color: MENTAL_COLOR[last.status] }
+        : { text: `棒${last.playedWand ? '✓' : '✗'} 跑${last.didParkour ? '✓' : '✗'}`, color: '#1A202C' }
+    })() : null,
   }
 }
 
@@ -82,8 +85,8 @@ function PoopCell({ s }: { s: ReturnType<typeof summarise>['poop'] }) {
 function MentalCell({ s }: { s: ReturnType<typeof summarise>['mental'] }) {
   if (!s) return <Empty />
   return (
-    <span className="wt-main" style={{ color: MENTAL_COLOR[s.status] }}>
-      {MENTAL_LABEL[s.status]}
+    <span className="wt-main" style={{ color: s.color }}>
+      {s.text}
     </span>
   )
 }

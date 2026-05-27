@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { EntryData, MealEntry, PoopEntry, MentalEntry } from '../types'
+import type { EntryData, MealEntry, PoopEntry } from '../types'
 import { useFoodRecords } from '../store'
 
 type EntryType = EntryData['type']
@@ -45,7 +45,9 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
   const [consistency, setConsistency] = useState<PoopEntry['consistency']>('normal')
 
   // ── mental ────────────────────────────────────────────────────────────────
-  const [mentalStatus, setMentalStatus] = useState<MentalEntry['status']>('normal')
+  const [playedWand, setPlayedWand] = useState(false)
+  const [didParkour, setDidParkour] = useState(false)
+  const [otherNote, setOtherNote]   = useState('')
 
   function selectType(t: EntryType) {
     setEntryType(t)
@@ -102,7 +104,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
     } else if (entryType === 'poop') {
       data = { type: 'poop', consistency }
     } else {
-      data = { type: 'mental', status: mentalStatus }
+      data = { type: 'mental', playedWand, didParkour, otherNote: otherNote.trim() || undefined }
     }
 
     onAdd(data, timestamp)
@@ -271,14 +273,24 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
             {/* ── 精神 ── */}
             {entryType === 'mental' && (
               <>
-                <label className="form-label">精神状态</label>
+                <label className="form-label">是否玩逗猫棒</label>
                 <div className="btn-group">
-                  {(['good', 'normal', 'poor'] as const).map((v, i) => (
-                    <button key={v} className={`seg-btn${mentalStatus === v ? ' active' : ''}`} onClick={() => setMentalStatus(v)}>
-                      {['好', '正常', '差'][i]}
-                    </button>
-                  ))}
+                  <button className={`seg-btn${playedWand  ? ' active' : ''}`} onClick={() => setPlayedWand(true)}>✅ 玩了</button>
+                  <button className={`seg-btn${!playedWand ? ' active' : ''}`} onClick={() => setPlayedWand(false)}>❌ 没玩</button>
                 </div>
+                <label className="form-label">是否跑酷</label>
+                <div className="btn-group">
+                  <button className={`seg-btn${didParkour  ? ' active' : ''}`} onClick={() => setDidParkour(true)}>✅ 跑了</button>
+                  <button className={`seg-btn${!didParkour ? ' active' : ''}`} onClick={() => setDidParkour(false)}>❌ 没跑</button>
+                </div>
+                <label className="form-label">
+                  其他异常（可选）
+                  <input
+                    className="form-input" type="text"
+                    value={otherNote} onChange={e => setOtherNote(e.target.value)}
+                    placeholder="例如：呕吐、食欲差..."
+                  />
+                </label>
               </>
             )}
 
