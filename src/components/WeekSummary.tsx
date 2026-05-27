@@ -64,7 +64,7 @@ function PeeCell({ s }: { s: ReturnType<typeof summarise>['pee'] }) {
   return (
     <div className="wt-cell-inner">
       <span className="wt-main">×{s.count}</span>
-      <span className="wt-sub">{s.totalMl.toFixed(0)} ml</span>
+      <span className="wt-sub">{parseFloat(s.totalMl.toFixed(3))} ml</span>
     </div>
   )
 }

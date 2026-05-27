@@ -27,7 +27,7 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
     line2 = `${entry.weightG}g`
   } else if (entry.type === 'pee') {
     icon = '💧'; cls = 'cc-pee'
-    line1 = `${peeMl(entry).toFixed(0)}ml`
+    line1 = `${peeMl(entry)}ml`
     line2 = entry.usg ? `${entry.usg}` : ''
   } else if (entry.type === 'poop') {
     icon = '💩'; cls = 'cc-poop'

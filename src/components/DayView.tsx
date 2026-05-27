@@ -50,7 +50,7 @@ function EntryRow({ entry, onDelete }: { entry: LogEntry; onDelete: () => void }
     icon = '💧'
     if (entry.litterWeightG !== undefined && entry.litterWeightG > 0) {
       title = `猫砂 ${entry.litterWeightG} g`
-      detail = `折算尿量 ${(entry.litterWeightG / 4).toFixed(1)} ml${entry.usg ? ` · USG ${entry.usg}` : ''}`
+      detail = `折算尿量 ${entry.litterWeightG / 4} ml${entry.usg ? ` · USG ${entry.usg}` : ''}`
     } else {
       title = { little: '尿少', normal: '尿正常', lots: '尿多' }[entry.amount]
       detail = entry.usg ? `USG ${entry.usg}` : ''

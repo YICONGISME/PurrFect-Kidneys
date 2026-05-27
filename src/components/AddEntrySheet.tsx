@@ -239,7 +239,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
                 {calculatedUrineMl > 0 && (
                   <div className="pee-result">
                     <span className="pee-result-label">折算尿量</span>
-                    <span className="pee-result-value">{calculatedUrineMl.toFixed(1)} ml</span>
+                    <span className="pee-result-value">{calculatedUrineMl} ml</span>
                     <span className="pee-result-formula">{litterWeightG} g ÷ 4</span>
                   </div>
                 )}
