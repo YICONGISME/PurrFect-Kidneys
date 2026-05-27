@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useFoodRecords, useCatProfile } from '../store'
 import type { FoodRecord } from '../types'
 
@@ -82,6 +82,7 @@ export function NutritionPage() {
     moisture: '', phosphorus: '', calcium: '', canWeight: '200',
   })
   const [catWeightStr, setCatWeightStr] = useState(String(profile.weightKg || 4.2))
+  useEffect(() => { setCatWeightStr(String(profile.weightKg)) }, [profile.weightKg])
   const [factor, setFactor] = useState('1.2')
   const [result, setResult] = useState<CalcResult | null>(null)
   const [dailyResult, setDailyResult] = useState<{
@@ -364,7 +365,7 @@ export function NutritionPage() {
         <div className="input-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
           <label className="form-label">
             体重 (kg)
-            <input className="form-input" type="number" step="0.1" min="0.1" value={catWeightStr}
+            <input className="form-input" type="number" step="0.01" min="0.1" value={catWeightStr}
               onChange={e => setCatWeightStr(e.target.value)} />
           </label>
           <label className="form-label">
