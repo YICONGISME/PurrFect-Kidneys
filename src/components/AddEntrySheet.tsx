@@ -1,25 +1,25 @@
 import { useState } from 'react'
 import type { EntryData, MealEntry, PeeEntry, PoopEntry, MentalEntry } from '../types'
 
+type EntryType = EntryData['type']
+
 interface Props {
-  defaultDate: string   // YYYY-MM-DD
+  defaultDate: string          // YYYY-MM-DD
+  preselectedType?: EntryType  // if provided, skip type-picker step
   onAdd: (data: EntryData, timestamp: string) => void
   onClose: () => void
 }
 
-type StepType = 'type' | 'detail'
-type EntryType = EntryData['type']
-
-const ENTRY_TYPES: { id: EntryType; icon: string; label: string; color: string }[] = [
-  { id: 'meal',   icon: '🍽️', label: '吃饭', color: 'var(--meal)' },
-  { id: 'pee',    icon: '💧', label: '尿尿', color: 'var(--pee)' },
-  { id: 'poop',   icon: '💩', label: '拉屎', color: 'var(--poop)' },
-  { id: 'mental', icon: '😺', label: '精神', color: 'var(--mental)' },
+const ENTRY_TYPES: { id: EntryType; icon: string; label: string }[] = [
+  { id: 'meal',   icon: '🍽️', label: '吃饭' },
+  { id: 'pee',    icon: '💧', label: '尿尿' },
+  { id: 'poop',   icon: '💩', label: '拉屎' },
+  { id: 'mental', icon: '😺', label: '精神' },
 ]
 
-export function AddEntrySheet({ defaultDate, onAdd, onClose }: Props) {
-  const [step, setStep] = useState<StepType>('type')
-  const [entryType, setEntryType] = useState<EntryType>('meal')
+export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: Props) {
+  const [entryType, setEntryType] = useState<EntryType>(preselectedType ?? 'meal')
+  const [showPicker, setShowPicker] = useState(!preselectedType)
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5))
 
   // meal
@@ -39,7 +39,7 @@ export function AddEntrySheet({ defaultDate, onAdd, onClose }: Props) {
 
   function selectType(t: EntryType) {
     setEntryType(t)
-    setStep('detail')
+    setShowPicker(false)
   }
 
   function handleSubmit() {
@@ -61,32 +61,31 @@ export function AddEntrySheet({ defaultDate, onAdd, onClose }: Props) {
     onClose()
   }
 
+  const meta = ENTRY_TYPES.find(t => t.id === entryType)!
+
   return (
     <div className="sheet-overlay" onClick={onClose}>
       <div className="sheet" onClick={e => e.stopPropagation()}>
         <div className="sheet-handle" />
 
-        {step === 'type' && (
+        {showPicker ? (
           <>
             <h3 className="sheet-title">选择记录类型</h3>
             <div className="type-grid">
               {ENTRY_TYPES.map(t => (
-                <button key={t.id} className="type-btn" style={{ '--accent': t.color } as React.CSSProperties} onClick={() => selectType(t.id)}>
+                <button key={t.id} className="type-btn" onClick={() => selectType(t.id)}>
                   <span className="type-icon">{t.icon}</span>
                   <span>{t.label}</span>
                 </button>
               ))}
             </div>
           </>
-        )}
-
-        {step === 'detail' && (
+        ) : (
           <>
-            <button className="sheet-back" onClick={() => setStep('type')}>← 返回</button>
-            <h3 className="sheet-title">
-              {ENTRY_TYPES.find(t => t.id === entryType)?.icon}{' '}
-              {ENTRY_TYPES.find(t => t.id === entryType)?.label}
-            </h3>
+            <div className="sheet-header">
+              <button className="sheet-back" onClick={() => setShowPicker(true)}>← 返回</button>
+              <h3 className="sheet-title">{meta.icon} {meta.label}</h3>
+            </div>
 
             <label className="form-label">
               时间
@@ -97,12 +96,12 @@ export function AddEntrySheet({ defaultDate, onAdd, onClose }: Props) {
               <>
                 <label className="form-label">食物类型</label>
                 <div className="btn-group">
-                  <button className={`seg-btn${foodType === 'canned' ? ' active' : ''}`} onClick={() => setFoodType('canned')}>德罐</button>
+                  <button className={`seg-btn${foodType === 'canned'   ? ' active' : ''}`} onClick={() => setFoodType('canned')}>德罐</button>
                   <button className={`seg-btn${foodType === 'homemade' ? ' active' : ''}`} onClick={() => setFoodType('homemade')}>熟自制</button>
                 </div>
                 <label className="form-label">
                   克重 (g)
-                  <input className="form-input" type="number" min="1" value={weightG} onChange={e => setWeightG(e.target.value)} placeholder="例如：80" />
+                  <input className="form-input" type="number" min="1" value={weightG}   onChange={e => setWeightG(e.target.value)}  placeholder="例如：80" />
                 </label>
                 <label className="form-label">
                   含水量 (%)
@@ -122,7 +121,7 @@ export function AddEntrySheet({ defaultDate, onAdd, onClose }: Props) {
                   ))}
                 </div>
                 <label className="form-label">
-                  尿比重 (可选)
+                  尿比重（可选）
                   <input className="form-input" type="number" step="0.001" min="1.001" max="1.080" value={usg} onChange={e => setUsg(e.target.value)} placeholder="例如：1.020" />
                 </label>
               </>

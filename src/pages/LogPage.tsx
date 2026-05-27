@@ -1,11 +1,7 @@
 import { useLogEntries } from '../store'
-import { WeekTable } from '../components/WeekTable'
+import { DayView } from '../components/DayView'
 
 export function LogPage() {
   const { getDay, addEntry, deleteEntry } = useLogEntries()
-  return (
-    <div className="page">
-      <WeekTable getDay={getDay} addEntry={addEntry} deleteEntry={deleteEntry} />
-    </div>
-  )
+  return <DayView getDay={getDay} addEntry={addEntry} deleteEntry={deleteEntry} />
 }
