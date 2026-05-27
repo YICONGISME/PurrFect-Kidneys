@@ -31,6 +31,15 @@ const DEFAULT_PROFILE: CatProfile = {
 
 export function useCatProfile() {
   const [profile, setProfile] = useLocalStorage<CatProfile>('pk:profile', DEFAULT_PROFILE)
+
+  // one-time migration: old default was 4, update to 4.2
+  useEffect(() => {
+    if (profile.weightKg === 4) {
+      setProfile(p => ({ ...p, weightKg: 4.2 }))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const rer = 30 * profile.weightKg + 70
   const der = rer * profile.activityFactor
   const dailyWaterMl = profile.weightKg * 45
