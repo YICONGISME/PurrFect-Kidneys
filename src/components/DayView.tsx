@@ -7,11 +7,16 @@ import { AddEntrySheet } from './AddEntrySheet'
 
 const PEE_ML = { little: 15, normal: 35, lots: 60 }
 
+function peeOutputMl(e: LogEntry & { type: 'pee' }): number {
+  if (e.litterWeightG !== undefined && e.litterWeightG > 0) return e.litterWeightG / 4
+  return PEE_ML[e.amount]
+}
+
 function calcWater(entries: LogEntry[]) {
   let intakeMl = 0, outputMl = 0
   for (const e of entries) {
     if (e.type === 'meal') intakeMl += e.weightG * e.waterPct / 100
-    if (e.type === 'pee')  outputMl += PEE_ML[e.amount]
+    if (e.type === 'pee')  outputMl += peeOutputMl(e)
   }
   return { intakeMl, outputMl, balance: intakeMl - outputMl }
 }
@@ -37,13 +42,19 @@ function EntryRow({ entry, onDelete }: { entry: LogEntry; onDelete: () => void }
 
   if (entry.type === 'meal') {
     icon = '🍽️'
-    title = entry.foodType === 'canned' ? '德罐' : '熟自制'
-    detail = `${entry.weightG} g · 含水 ${entry.waterPct}%（≈${(entry.weightG * entry.waterPct / 100).toFixed(0)} ml）`
+    title = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '熟自制')
+    const waterMl = (entry.weightG * entry.waterPct / 100).toFixed(0)
+    detail = `${entry.weightG} g · 含水 ${entry.waterPct}%（≈${waterMl} ml）`
     rowCls = 'er-meal'
   } else if (entry.type === 'pee') {
     icon = '💧'
-    title = { little: '尿少', normal: '尿正常', lots: '尿多' }[entry.amount]
-    detail = entry.usg ? `USG ${entry.usg}` : ''
+    if (entry.litterWeightG !== undefined && entry.litterWeightG > 0) {
+      title = `猫砂 ${entry.litterWeightG} g`
+      detail = `折算尿量 ${(entry.litterWeightG / 4).toFixed(1)} ml${entry.usg ? ` · USG ${entry.usg}` : ''}`
+    } else {
+      title = { little: '尿少', normal: '尿正常', lots: '尿多' }[entry.amount]
+      detail = entry.usg ? `USG ${entry.usg}` : ''
+    }
     rowCls = 'er-pee'
   } else if (entry.type === 'poop') {
     icon = '💩'

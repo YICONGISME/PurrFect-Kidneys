@@ -16,12 +16,17 @@ export interface MealEntry {
   foodType: 'canned' | 'homemade'   // 德罐 | 熟自制
   weightG: number
   waterPct: number                  // 含水量 %
+  foodRecordId?: number             // id of linked FoodRecord
+  foodName?: string                 // auto-filled from FoodRecord
 }
 
 export interface PeeEntry {
   type: 'pee'
   amount: 'little' | 'normal' | 'lots'
   usg?: number                      // 尿比重 e.g. 1.020
+  // optional: weigh litter clump instead of estimating
+  // formula: urineMl = litterWeightG / 4  (10ml → 40g)
+  litterWeightG?: number
 }
 
 export interface PoopEntry {
