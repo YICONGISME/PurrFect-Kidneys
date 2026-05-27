@@ -228,16 +228,21 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
                   </div>
                 )}
 
-                <label className="form-label">是否喂益生菌</label>
-                <div className="btn-group">
-                  <button className={`seg-btn${probiotics  ? ' active' : ''}`} onClick={() => setProbiotics(true)}>✅ 喂了</button>
-                  <button className={`seg-btn${!probiotics ? ' active' : ''}`} onClick={() => setProbiotics(false)}>❌ 没喂</button>
-                </div>
-
-                <label className="form-label">是否喂鱼油</label>
-                <div className="btn-group">
-                  <button className={`seg-btn${fishOil  ? ' active' : ''}`} onClick={() => setFishOil(true)}>✅ 喂了</button>
-                  <button className={`seg-btn${!fishOil ? ' active' : ''}`} onClick={() => setFishOil(false)}>❌ 没喂</button>
+                <div className="supp-row">
+                  <div className="supp-col">
+                    <span className="supp-label">益生菌</span>
+                    <div className="btn-group">
+                      <button className={`seg-btn${probiotics  ? ' active' : ''}`} onClick={() => setProbiotics(true)}>✅</button>
+                      <button className={`seg-btn${!probiotics ? ' active' : ''}`} onClick={() => setProbiotics(false)}>❌</button>
+                    </div>
+                  </div>
+                  <div className="supp-col">
+                    <span className="supp-label">鱼油</span>
+                    <div className="btn-group">
+                      <button className={`seg-btn${fishOil  ? ' active' : ''}`} onClick={() => setFishOil(true)}>✅</button>
+                      <button className={`seg-btn${!fishOil ? ' active' : ''}`} onClick={() => setFishOil(false)}>❌</button>
+                    </div>
+                  </div>
                 </div>
               </>
             )}

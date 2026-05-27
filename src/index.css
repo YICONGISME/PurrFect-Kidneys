@@ -677,6 +677,11 @@ select.form-input {
 }
 .calc-formula { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 6px; }
 
+/* supplement row (益生菌 + 鱼油 side by side) */
+.supp-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.supp-col  { display: flex; flex-direction: column; gap: 4px; }
+.supp-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+
 /* pee result card */
 .pee-result {
   display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
