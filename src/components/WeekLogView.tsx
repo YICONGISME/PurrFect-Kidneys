@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { LogEntry, EntryData } from '../types'
 import { getWeekStart, getWeekDays, toDateStr } from '../store'
 import { AddEntrySheet } from './AddEntrySheet'
@@ -96,6 +96,12 @@ export function WeekLogView({ getDay, addEntry, deleteEntry }: Props) {
   const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()))
   const [selectedDate, setSelectedDate] = useState(todayStr)
   const [sheetType, setSheetType] = useState<EntryType | null>(null)
+
+  // Reset to today when the calendar date changes (e.g. app left open overnight)
+  useEffect(() => {
+    setWeekStart(getWeekStart(new Date()))
+    setSelectedDate(todayStr)
+  }, [todayStr])
 
   const days = getWeekDays(weekStart)
 
