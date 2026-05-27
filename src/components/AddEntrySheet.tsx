@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { EntryData, MealEntry, PeeEntry, PoopEntry, MentalEntry } from '../types'
+import type { EntryData, MealEntry, PoopEntry, MentalEntry } from '../types'
 import { useFoodRecords } from '../store'
 
 type EntryType = EntryData['type']
@@ -38,9 +38,6 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
   const [manualWaterPct, setManualWaterPct] = useState('')
 
   // ── pee ───────────────────────────────────────────────────────────────────
-  // peeMode: 'amount' = pick 少/正常/多; 'litter' = weigh clump
-  const [peeMode, setPeeMode] = useState<'amount' | 'litter'>('amount')
-  const [peeAmount, setPeeAmount] = useState<PeeEntry['amount']>('normal')
   const [litterWeightG, setLitterWeightG] = useState('')
   const [usg, setUsg] = useState('')
 
@@ -68,9 +65,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
       if (mealMode === 'record') return selectedRecord !== null
       return !!manualWaterPct
     }
-    if (entryType === 'pee' && peeMode === 'litter') {
-      return litterNum > 0
-    }
+    if (entryType === 'pee') return litterNum > 0
     return true
   }
 
@@ -100,9 +95,9 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
     } else if (entryType === 'pee') {
       data = {
         type: 'pee',
-        amount: peeMode === 'litter' ? 'normal' : peeAmount,
+        amount: 'normal',
+        litterWeightG: litterNum,
         usg: usg ? Number(usg) : undefined,
-        litterWeightG: peeMode === 'litter' ? litterNum : undefined,
       }
     } else if (entryType === 'poop') {
       data = { type: 'poop', consistency }
@@ -232,42 +227,22 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
             {/* ── 尿尿 ── */}
             {entryType === 'pee' && (
               <>
-                <label className="form-label">记录方式</label>
-                <div className="btn-group">
-                  <button className={`seg-btn${peeMode === 'amount' ? ' active' : ''}`} onClick={() => setPeeMode('amount')}>选择尿量</button>
-                  <button className={`seg-btn${peeMode === 'litter' ? ' active' : ''}`} onClick={() => setPeeMode('litter')}>称猫砂团重</button>
-                </div>
-
-                {peeMode === 'amount' ? (
-                  <>
-                    <label className="form-label">尿量</label>
-                    <div className="btn-group">
-                      {(['little', 'normal', 'lots'] as const).map((v, i) => (
-                        <button key={v} className={`seg-btn${peeAmount === v ? ' active' : ''}`} onClick={() => setPeeAmount(v)}>
-                          {['少', '正常', '多'][i]}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <label className="form-label">
-                      尿团重量 (g)
-                      <input
-                        className="form-input" type="number" min="1" step="0.1"
-                        value={litterWeightG} onChange={e => setLitterWeightG(e.target.value)}
-                        placeholder="例如：120"
-                      />
-                    </label>
-                    {calculatedUrineMl > 0 && (
-                      <div className="calc-preview">
-                        💧 折算尿量约 {calculatedUrineMl.toFixed(1)} ml
-                        <span className="calc-formula">（{litterWeightG}g ÷ 4 = {calculatedUrineMl.toFixed(1)} ml）</span>
-                      </div>
-                    )}
-                  </>
+                <label className="form-label">
+                  猫砂尿团重量 (g)
+                  <input
+                    className="form-input" type="number" min="1" step="0.1"
+                    value={litterWeightG} onChange={e => setLitterWeightG(e.target.value)}
+                    placeholder="例如：120"
+                    autoFocus
+                  />
+                </label>
+                {calculatedUrineMl > 0 && (
+                  <div className="pee-result">
+                    <span className="pee-result-label">折算尿量</span>
+                    <span className="pee-result-value">{calculatedUrineMl.toFixed(1)} ml</span>
+                    <span className="pee-result-formula">{litterWeightG} g ÷ 4</span>
+                  </div>
                 )}
-
                 <label className="form-label">
                   尿比重（可选）
                   <input
