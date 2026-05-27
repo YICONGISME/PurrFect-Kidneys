@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/PurrFect-Kidneys/sw.js', { scope: '/PurrFect-Kidneys/' })})}
