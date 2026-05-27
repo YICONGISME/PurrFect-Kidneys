@@ -108,13 +108,19 @@ body {
 .count { font-size: 12px; color: var(--muted); font-weight: 400; }
 
 /* ── Forms ───────────────────────────────────────────────────────────────── */
-.form-label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
+.form-label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  margin-bottom: 8px;
+  min-width: 0;          /* prevent grid overflow */
+}
 .form-input {
+  width: 100%;           /* fill grid cell */
+  min-width: 0;          /* prevent grid overflow */
   border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-  padding: 10px 12px; font-size: 16px; font-family: inherit;
+  padding: 8px 10px; font-family: inherit;
   background: var(--white); transition: border-color .15s;
-  /* iOS: prevent zoom on focus */
-  font-size: max(16px, 1em);
+  font-size: max(16px, 1em);   /* iOS: prevent zoom on focus */
 }
 .form-input:focus { outline: none; border-color: var(--brand); }
 .form-input.filled { border-color: #68D391; background: #F0FFF4; }
@@ -122,10 +128,13 @@ select.form-input {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%23718096'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  background-position: right 10px center;
+  padding-right: 28px;
 }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* 2-column default */
+.input-grid   { display: grid; grid-template-columns: 1fr 1fr;       gap: 8px; min-width: 0; }
+/* 4-column compact — used in nutrition 8-field block */
+.input-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; min-width: 0; }
 
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
 .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }

@@ -266,7 +266,7 @@ export function NutritionPage() {
           产品名称
           <input className="form-input" type="text" value={form.name} onChange={e => setField('name', e.target.value)} placeholder="例如：catz 3号" />
         </label>
-        <div className="input-grid">
+        <div className="input-grid-4">
           {([
             ['protein', '粗蛋白 %', '0.01'],
             ['fat', '粗脂肪 %', '0.01'],
