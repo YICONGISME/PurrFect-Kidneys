@@ -56,7 +56,7 @@ export function ProfilePage() {
         </label>
         <label className="form-label">
           体重 (kg)
-          <input className="form-input" type="number" step="0.1" min="0.5" value={profile.weightKg} onChange={e => update('weightKg', Number(e.target.value))} />
+          <input className="form-input" type="number" step="0.01" min="0.1" value={profile.weightKg} onChange={e => update('weightKg', Number(e.target.value))} />
         </label>
         <label className="form-label">
           能量系数

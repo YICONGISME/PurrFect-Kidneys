@@ -24,7 +24,7 @@ const DEFAULT_PROFILE: CatProfile = {
   name: '',
   breed: '',
   birthDate: '',
-  weightKg: 4,
+  weightKg: 4.2,
   neutered: true,
   activityFactor: 1.2,
 }
