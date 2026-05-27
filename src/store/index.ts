@@ -60,10 +60,10 @@ export function useLogEntries() {
     setEntries(prev => prev.filter(e => e.id !== id))
   }, [setEntries])
 
-  // Returns entries for a specific calendar day (YYYY-MM-DD), sorted by time
+  // Returns entries for a specific calendar day (YYYY-MM-DD local), sorted by time
   const getDay = useCallback((dateStr: string) => {
     return entries
-      .filter(e => e.timestamp.slice(0, 10) === dateStr)
+      .filter(e => toDateStr(new Date(e.timestamp)) === dateStr)
       .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
   }, [entries])
 
@@ -149,5 +149,8 @@ export function getWeekDays(weekStart: Date): Date[] {
 }
 
 export function toDateStr(d: Date): string {
-  return d.toISOString().slice(0, 10)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
 }
