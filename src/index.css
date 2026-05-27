@@ -518,6 +518,27 @@ select.form-input {
 }
 .cc-del:active { color: var(--red); }
 
+/* ── Daily water balance (within column) ────────────────────────────────── */
+.wlv-water-bal {
+  border-top: 1px solid rgba(0,0,0,.08);
+  padding: 4px 3px 5px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.wb-ok   { background: #F0FFF4; }
+.wb-warn { background: #FFF8F1; }
+.wb-in, .wb-out, .wb-bal {
+  display: block;
+  font-size: 8px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.wb-in  { color: var(--brand); }
+.wb-out { color: var(--pee); }
+.wb-bal { font-size: 9px; font-weight: 800; }
+.wb-ok   .wb-bal { color: var(--green); }
+.wb-warn .wb-bal { color: var(--orange); }
+
 /* ── Action bar ──────────────────────────────────────────────────────────── */
 .wlv-action-bar {
   flex-shrink: 0;

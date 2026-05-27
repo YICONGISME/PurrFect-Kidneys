@@ -11,6 +11,19 @@ function peeMl(e: LogEntry & { type: 'pee' }) {
   return e.litterWeightG && e.litterWeightG > 0 ? e.litterWeightG / 4 : PEE_ML[e.amount]
 }
 
+function calcWater(entries: LogEntry[]) {
+  let intakeMl = 0, outputMl = 0
+  for (const e of entries) {
+    if (e.type === 'meal') intakeMl += e.weightG * e.waterPct / 100
+    if (e.type === 'pee')  outputMl += peeMl(e)
+  }
+  return {
+    intakeMl: parseFloat(intakeMl.toFixed(1)),
+    outputMl: parseFloat(outputMl.toFixed(1)),
+    balance:  parseFloat((intakeMl - outputMl).toFixed(1)),
+  }
+}
+
 const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
 // ─── Compact entry card ───────────────────────────────────────────────────────
@@ -24,7 +37,7 @@ function CompactCard({ entry, onDelete }: { entry: LogEntry; onDelete: () => voi
   if (entry.type === 'meal') {
     icon = '🍽️'; cls = 'cc-meal'
     line1 = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '自制')
-    line2 = `${entry.weightG}g`
+    line2 = `${entry.weightG}g/${entry.waterPct}%`
   } else if (entry.type === 'pee') {
     icon = '💧'; cls = 'cc-pee'
     line1 = `${peeMl(entry)}ml`
@@ -115,6 +128,8 @@ export function WeekLogView({ getDay, addEntry, deleteEntry }: Props) {
             const entries = getDay(ds)
             const isToday = ds === todayStr
             const isSel   = ds === selectedDate
+            const { intakeMl, outputMl, balance } = calcWater(entries)
+            const hasWater = intakeMl > 0 || outputMl > 0
 
             return (
               <div key={ds} className={`wlv-col${isSel ? ' wlv-selected' : ''}${isToday ? ' wlv-today' : ''}`}>
@@ -131,6 +146,15 @@ export function WeekLogView({ getDay, addEntry, deleteEntry }: Props) {
                     <CompactCard key={entry.id} entry={entry} onDelete={() => deleteEntry(entry.id)} />
                   ))}
                 </div>
+
+                {/* daily water balance */}
+                {hasWater && (
+                  <div className={`wlv-water-bal ${balance >= 0 ? 'wb-ok' : 'wb-warn'}`}>
+                    <span className="wb-in">摄 {intakeMl}ml</span>
+                    <span className="wb-out">排 {outputMl}ml</span>
+                    <span className="wb-bal">{balance >= 0 ? '+' : ''}{balance}ml</span>
+                  </div>
+                )}
               </div>
             )
           })}
