@@ -33,7 +33,7 @@ export function AddEntrySheet({ defaultDate, preselectedType, onAdd, onClose }: 
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(
     foodRecords.length > 0 ? foodRecords[0].id : null
   )
-  const [weightG, setWeightG]   = useState('')
+  const [weightG, setWeightG]   = useState('30')
   const [manualFoodType, setManualFoodType] = useState<MealEntry['foodType']>('canned')
   const [manualWaterPct, setManualWaterPct] = useState('')
   const [probiotics, setProbiotics] = useState(false)

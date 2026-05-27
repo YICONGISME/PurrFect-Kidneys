@@ -41,7 +41,7 @@ function summarise(entries: LogEntry[]) {
       const last = mentals[mentals.length - 1]
       return last.status
         ? { text: MENTAL_LABEL[last.status], color: MENTAL_COLOR[last.status] }
-        : { text: `棒${last.playedWand ? '✓' : '✗'} 跑${last.didParkour ? '✓' : '✗'}`, color: '#1A202C' }
+        : { text: `玩${last.playedWand ? '✓' : '✗'} 跑${last.didParkour ? '✓' : '✗'}`, color: '#1A202C' }
     })() : null,
   }
 }
