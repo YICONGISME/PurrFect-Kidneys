@@ -491,11 +491,11 @@ select.form-input {
 .compact-card {
   position: relative;
   display: flex; flex-direction: column; align-items: center;
-  gap: 1px; padding: 4px 2px 3px;
+  gap: 3px; padding: 8px 3px 7px;
   border-radius: 6px; border: 1px solid transparent;
   text-align: center;
   overflow: hidden;
-  min-height: 52px;
+  min-height: 80px;
 }
 
 /* type colours */
@@ -504,11 +504,11 @@ select.form-input {
 .cc-poop   { background: var(--poop-bg);   border-color: var(--poop-border);   }
 .cc-mental { background: var(--mental-bg); border-color: var(--mental-border); }
 
-.cc-time  { font-size: 8px;  color: var(--muted); font-weight: 600; line-height: 1; }
-.cc-icon  { font-size: 14px; line-height: 1; }
-.cc-line1 { font-size: 9px;  font-weight: 700; color: var(--text); line-height: 1.2;
+.cc-time  { font-size: 9px;  color: var(--muted); font-weight: 600; line-height: 1; }
+.cc-icon  { font-size: 16px; line-height: 1; }
+.cc-line1 { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.3;
             word-break: break-all; max-width: 100%; }
-.cc-line2 { font-size: 8px;  color: var(--muted); line-height: 1; }
+.cc-line2 { font-size: 9px;  color: var(--muted); line-height: 1.2; }
 
 .cc-del {
   position: absolute; top: 1px; right: 1px;
