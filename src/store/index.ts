@@ -34,7 +34,7 @@ export function useCatProfile() {
 
   // one-time migration: old default was 4, update to 4.2
   useEffect(() => {
-    if (profile.weightKg === 4) {
+    if (profile.weightKg === 4 || profile.weightKg === 4.3) {
       setProfile(p => ({ ...p, weightKg: 4.2 }))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
