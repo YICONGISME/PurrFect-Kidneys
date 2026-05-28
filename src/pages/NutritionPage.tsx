@@ -70,10 +70,51 @@ function Badge({ pass }: { pass: boolean }) {
   return <span className={`badge ${pass ? 'badge-pass' : 'badge-fail'}`}>{pass ? '达标 ✓' : '超标 ✗'}</span>
 }
 
+// ─── DM rating badges (三大供能判定表) ────────────────────────────────────────
+
+type DmRating = 'fail' | 'marginal' | 'pass' | 'excellent' | 'high'
+
+function getDmRating(type: 'protein' | 'fat' | 'nfe', val: number): DmRating {
+  if (type === 'nfe') {
+    if (val > 15) return 'fail'
+    if (val > 10) return 'marginal'
+    if (val > 5)  return 'pass'
+    return 'excellent'
+  }
+  if (type === 'protein') {
+    if (val > 60) return 'high'
+    if (val >= 45) return 'excellent'
+    if (val >= 40) return 'pass'
+    if (val >= 35) return 'marginal'
+    return 'fail'
+  }
+  // fat
+  if (val > 45) return 'high'
+  if (val > 40) return 'high'
+  if (val >= 28) return 'excellent'
+  if (val >= 25) return 'pass'
+  if (val >= 18) return 'marginal'
+  return 'fail'
+}
+
+const DM_RATING_CONFIG: Record<DmRating, { label: string; cls: string }> = {
+  fail:      { label: '不合格 ✗', cls: 'dm-fail' },
+  marginal:  { label: '勉强合格 △', cls: 'dm-marginal' },
+  pass:      { label: '合格 ✓', cls: 'dm-pass' },
+  excellent: { label: '优秀 ☆', cls: 'dm-excellent' },
+  high:      { label: '过高/慎 ●', cls: 'dm-high' },
+}
+
+function DmBadge({ type, val }: { type: 'protein' | 'fat' | 'nfe'; val: number }) {
+  const rating = getDmRating(type, val)
+  const { label, cls } = DM_RATING_CONFIG[rating]
+  return <span className={`dm-badge ${cls}`}>{label}</span>
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function NutritionPage() {
-  const { records, addRecord, deleteRecord } = useFoodRecords()
+  const { addRecord } = useFoodRecords()
   const { profile } = useCatProfile()
 
   const [parseStr, setParseStr] = useState('')
@@ -181,17 +222,6 @@ export function NutritionPage() {
     showToast(`已保存：${record.name}`)
   }
 
-  function handleLoad(r: FoodRecord) {
-    setForm({
-      name: r.name, protein: String(r.protein), fat: String(r.fat),
-      ash: String(r.ash), fiber: String(r.fiber), moisture: String(r.moisture),
-      phosphorus: String(r.phosphorus), calcium: String(r.calcium), canWeight: String(r.canWeight),
-    })
-    setCatWeightStr(String(r.catWeightKg))
-    setResult(null); setDailyResult(null)
-    showToast(`已载入：${r.name}`)
-  }
-
   function handleClear() {
     setForm({ name: '', protein: '', fat: '', ash: '', fiber: '', moisture: '', phosphorus: '', calcium: '', canWeight: '200' })
     setResult(null); setDailyResult(null)
@@ -205,46 +235,6 @@ export function NutritionPage() {
   return (
     <div className="page nutrition-page">
       <h2 className="page-title">🧪 营养分析</h2>
-
-      {/* History records */}
-      {records.length > 0 && (
-        <section className="card">
-          <h3 className="card-title">📚 历史记录 <span className="count">({records.length})</span></h3>
-          <div className="records-list">
-            {records.map(r => (
-              <div key={r.id} className="record-row">
-                <div className="record-row-info">
-                  <span className="record-name">{r.name}</span>
-                  <div className="record-tags">
-                    {r.mePerCan ? <span>{r.mePerCan.toFixed(0)} kcal/罐</span> : <span>{r.meTotal.toFixed(1)} kcal/100g</span>}
-                    <span>DM {r.dm.toFixed(1)}%</span>
-                    {r.phosphorus > 0 && <span>磷DM {r.dmP.toFixed(3)}%</span>}
-                    {r.phosphorus > 0 && <span>{r.pPer1000kcal.toFixed(0)} mg/1000kcal</span>}
-                    {r.ckdPass !== null && (
-                      <span className={r.ckdPass ? 'tag-pass' : 'tag-fail'}>
-                        {r.ckdPass ? '✅ 肾猫达标' : '⚠️ 磷超标'}
-                      </span>
-                    )}
-                  </div>
-                  {r.rer > 0 && (
-                    <div className="record-tags" style={{ marginTop: 2 }}>
-                      <span>RER {r.rer.toFixed(0)} kcal</span>
-                      {r.dailyFoodG > 0 && <span>每日 {r.dailyFoodG.toFixed(1)} g</span>}
-                      {r.dailyCans > 0 && <span>{r.dailyCans.toFixed(2)} 罐</span>}
-                      {r.suppWaterMl > 0 && <span>补水 {r.suppWaterMl.toFixed(0)} ml</span>}
-                    </div>
-                  )}
-                  <span className="record-date">{r.date}</span>
-                </div>
-                <div className="record-row-actions">
-                  <button className="btn-icon" onClick={() => handleLoad(r)} title="载入">📥</button>
-                  <button className="btn-icon btn-del" onClick={() => deleteRecord(r.id)} title="删除">🗑️</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Parse */}
       <section className="card">
@@ -301,6 +291,16 @@ export function NutritionPage() {
       {result && (
         <section className="card">
           <h3 className="card-title">⚡ 热量（AAFCO 改良 Atwater）</h3>
+          <div className="formula-box">
+            <div className="formula-line">
+              <span className="formula-label">NFE</span>
+              <span className="formula-expr">= 100 − 蛋白 − 脂肪 − 灰分 − 纤维 − 水分</span>
+            </div>
+            <div className="formula-line">
+              <span className="formula-label">ME</span>
+              <span className="formula-expr">= 蛋白 × <strong>3.5</strong> + 脂肪 × <strong>8.5</strong> + NFE × <strong>3.5</strong> <span className="formula-unit">(kcal/100g)</span></span>
+            </div>
+          </div>
           <div className="results-grid">
             <ResultItem label="NFE 碳水" value={`${result.nfe.toFixed(2)}%`} />
             <ResultItem label="蛋白热量" value={`${result.meProtein.toFixed(1)} kcal`} />
@@ -316,13 +316,27 @@ export function NutritionPage() {
           <h3 className="card-title">🔬 干物质基础（DM%）</h3>
           <div className="results-grid">
             <ResultItem label="干物质 DM" value={`${result.dm.toFixed(1)}%`} />
-            <ResultItem label="粗蛋白 DM" value={`${result.dmProtein.toFixed(1)}%`} />
-            <ResultItem label="粗脂肪 DM" value={`${result.dmFat.toFixed(1)}%`} />
-            <ResultItem label="粗灰分 DM" value={`${result.dmAsh.toFixed(1)}%`} />
-            <ResultItem label="粗纤维 DM" value={`${result.dmFiber.toFixed(1)}%`} />
-            <ResultItem label="NFE DM" value={`${result.dmNFE.toFixed(1)}%`} />
             {p > 0 && <ResultItem label="磷 DM%" value={`${result.dmP.toFixed(3)}%`} />}
             {getNum('calcium') > 0 && <ResultItem label="钙 DM%" value={`${result.dmCa.toFixed(3)}%`} />}
+            <ResultItem label="粗灰分 DM" value={`${result.dmAsh.toFixed(1)}%`} />
+            <ResultItem label="粗纤维 DM" value={`${result.dmFiber.toFixed(1)}%`} />
+          </div>
+          <div className="dm-rating-list">
+            <div className="dm-rating-row">
+              <span className="dm-rating-label">蛋白质 DM</span>
+              <span className="dm-rating-val">{result.dmProtein.toFixed(1)}%</span>
+              <DmBadge type="protein" val={result.dmProtein} />
+            </div>
+            <div className="dm-rating-row">
+              <span className="dm-rating-label">脂肪 DM</span>
+              <span className="dm-rating-val">{result.dmFat.toFixed(1)}%</span>
+              <DmBadge type="fat" val={result.dmFat} />
+            </div>
+            <div className="dm-rating-row">
+              <span className="dm-rating-label">碳水 NFE DM</span>
+              <span className="dm-rating-val">{result.dmNFE.toFixed(1)}%</span>
+              <DmBadge type="nfe" val={result.dmNFE} />
+            </div>
           </div>
         </section>
       )}
@@ -360,7 +374,7 @@ export function NutritionPage() {
 
       {/* Daily plan */}
       <section className="card">
-        <h3 className="card-title">🍽️ 每日喂养计划</h3>
+        <h3 className="card-title">🥩 每日喂养计划</h3>
         <p className="hint">请先完成「计算分析」再计算每日需求</p>
         <div className="input-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
           <label className="form-label">

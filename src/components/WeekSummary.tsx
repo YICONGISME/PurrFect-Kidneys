@@ -122,8 +122,8 @@ export function WeekSummary({ getDay }: Props) {
         {/* header */}
         <div className="wt-row wt-header-row">
           <div className="wt-date-cell" />
-          <div className="wt-type-head wt-head-meal">🍽️ 吃饭</div>
-          <div className="wt-type-head wt-head-pee" >💧 尿尿</div>
+          <div className="wt-type-head wt-head-meal">🥩 吃饭</div>
+          <div className="wt-type-head wt-head-pee" >🚰 尿尿</div>
           <div className="wt-type-head wt-head-poop">💩 拉屎</div>
           <div className="wt-type-head wt-head-mental">😺 精神</div>
         </div>

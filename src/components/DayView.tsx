@@ -26,8 +26,8 @@ function calcWater(entries: LogEntry[]) {
 type EntryType = EntryData['type']
 
 const QUICK: { type: EntryType; icon: string; label: string; cls: string }[] = [
-  { type: 'meal',   icon: '🍽️', label: '吃饭', cls: 'qa-meal'   },
-  { type: 'pee',    icon: '💧', label: '尿尿', cls: 'qa-pee'    },
+  { type: 'meal',   icon: '🥩', label: '吃饭', cls: 'qa-meal'   },
+  { type: 'pee',    icon: '🚰', label: '尿尿', cls: 'qa-pee'    },
   { type: 'poop',   icon: '💩', label: '拉屎', cls: 'qa-poop'   },
   { type: 'mental', icon: '😺', label: '精神', cls: 'qa-mental' },
 ]
@@ -41,14 +41,14 @@ function EntryRow({ entry, onDelete }: { entry: LogEntry; onDelete: () => void }
   let icon = '', title = '', detail = '', rowCls = ''
 
   if (entry.type === 'meal') {
-    icon = '🍽️'
+    icon = '🥩'
     title = entry.foodName ?? (entry.foodType === 'canned' ? '德罐' : '熟自制')
     const waterMl = (entry.weightG * entry.waterPct / 100).toFixed(0)
     const sups = [...(entry.probiotics ? ['益生菌 ✓'] : []), ...(entry.fishOil ? ['鱼油 ✓'] : [])]
     detail = `${entry.weightG} g · 含水 ${entry.waterPct}%（≈${waterMl} ml）${sups.length ? ' · ' + sups.join(' · ') : ''}`
     rowCls = 'er-meal'
   } else if (entry.type === 'pee') {
-    icon = '💧'
+    icon = '🚰'
     if (entry.litterWeightG !== undefined && entry.litterWeightG > 0) {
       title = `猫砂 ${entry.litterWeightG} g`
       detail = `折算尿量 ${entry.litterWeightG / 4} ml${entry.usg ? ` · USG ${entry.usg}` : ''}`
@@ -101,6 +101,7 @@ export function DayView({ getDay, addEntry, deleteEntry }: Props) {
     const d = new Date(); d.setHours(0, 0, 0, 0); return d
   })
   const [sheetType, setSheetType] = useState<EntryType | null>(null)
+  const [fabOpen, setFabOpen] = useState(false)
 
   const todayStr = toDateStr(new Date())
   const currentStr = toDateStr(current)
@@ -117,6 +118,11 @@ export function DayView({ getDay, addEntry, deleteEntry }: Props) {
     setCurrent(d)
   }
 
+  function openSheet(type: EntryType) {
+    setFabOpen(false)
+    setSheetType(type)
+  }
+
   const hasMeals = entries.some(e => e.type === 'meal')
 
   return (
@@ -130,16 +136,6 @@ export function DayView({ getDay, addEntry, deleteEntry }: Props) {
           {isToday && <span className="dv-today-badge">今天</span>}
         </div>
         <button className="dv-nav-btn" onClick={() => go(1)} disabled={isToday}>›</button>
-      </div>
-
-      {/* ── Quick add buttons ── */}
-      <div className="dv-quick-add">
-        {QUICK.map(q => (
-          <button key={q.type} className={`qa-btn ${q.cls}`} onClick={() => setSheetType(q.type)}>
-            <span className="qa-icon">{q.icon}</span>
-            <span className="qa-label">{q.label}</span>
-          </button>
-        ))}
       </div>
 
       {/* ── Water balance ── */}
@@ -164,7 +160,7 @@ export function DayView({ getDay, addEntry, deleteEntry }: Props) {
           <div className="dv-empty">
             <span className="dv-empty-icon">🐾</span>
             <p>今天还没有记录</p>
-            <p className="dv-empty-hint">点击上方按钮开始记录</p>
+            <p className="dv-empty-hint">点击右下角 + 按钮开始记录</p>
           </div>
         ) : (
           entries.map(e => (
@@ -182,6 +178,28 @@ export function DayView({ getDay, addEntry, deleteEntry }: Props) {
           onClose={() => setSheetType(null)}
         />
       )}
+
+      {/* ── FAB 悬浮记录按钮 ── */}
+      {fabOpen && <div className="fab-backdrop" onClick={() => setFabOpen(false)} />}
+      <div className="fab-container">
+        {fabOpen && (
+          <div className="fab-menu">
+            {[...QUICK].reverse().map(q => (
+              <button key={q.type} className={`fab-item ${q.cls}`} onClick={() => openSheet(q.type)}>
+                <span className="fab-item-icon">{q.icon}</span>
+                <span className="fab-item-label">{q.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        <button
+          className={`fab-main${fabOpen ? ' fab-main--open' : ''}`}
+          onClick={() => setFabOpen(o => !o)}
+          aria-label="记录"
+        >
+          {fabOpen ? '×' : '+'}
+        </button>
+      </div>
     </div>
   )
 }

@@ -12,8 +12,8 @@ interface Props {
 }
 
 const ENTRY_TYPES: { id: EntryType; icon: string; label: string }[] = [
-  { id: 'meal',   icon: '🍽️', label: '吃饭' },
-  { id: 'pee',    icon: '💧', label: '尿尿' },
+  { id: 'meal',   icon: '🥩', label: '吃饭' },
+  { id: 'pee',    icon: '🚰', label: '尿尿' },
   { id: 'poop',   icon: '💩', label: '拉屎' },
   { id: 'mental', icon: '😺', label: '精神' },
 ]

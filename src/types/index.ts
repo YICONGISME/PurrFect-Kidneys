@@ -85,4 +85,4 @@ export interface FoodRecord {
 
 // ─── Navigation ──────────────────────────────────────────────────────────────
 
-export type NavTab = 'log' | 'nutrition' | 'profile'
+export type NavTab = 'log' | 'nutrition' | 'records' | 'profile'
